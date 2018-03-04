@@ -1,52 +1,46 @@
 # Metagenomic analysis 
 
 
-##Learning Objectives
+## Learning Objectives
 
 1.  Reporting bioinformatics projects using Markdown
 2.  Analyzing shotgun metagenme data
 3.  Data munging with R
 4.  Kraken, BWA analysis
 
-##Introduction
-A recently published paper looked in depth at the environmental metagenome of the NYC subway:  
-http://www.sciencedirect.com/science/article/pii/S2405471215000022  
+## Introduction
+A recent paper looked in depth at the [environmental metagenome of the NYC subway.](  
+http://www.sciencedirect.com/science/article/pii/S2405471215000022)  
 
-This caused a lot of publicity:
-http://www.nytimes.com/2015/02/07/nyregion/bubonic-plague-in-the-subway-system-dont-worry-about-it.html
+This caused [a lot of publicity.](
+http://www.nytimes.com/2015/02/07/nyregion/bubonic-plague-in-the-subway-system-dont-worry-about-it.html)
 
-Then follow-up apologia and discussions:  
-http://microbe.net/2015/02/17/the-long-road-from-data-to-wisdom-and-from-dna-to-pathogen/  
-
-Species composition was determined using the megablast-LCA and metaphlan tools.  An alternative approach 
+Then follow-up [discussion](http://microbe.net/2015/02/17/the-long-road-from-data-to-wisdom-and-from-dna-to-pathogen/) of wrong calls about anthrax and plague being present in the subway were made.  
+  
+Species composition was determined using the [megablast-LCA](http://www.sciencedirect.com/science/article/pii/S2405471215000022) and [metaphlan](https://paperpile.com/app/p/39693e3b-ccd1-0958-9347-be9383c22a58) tools.  An alternative approach 
 is to use the rapid k-mer based Kraken software. In this exercise we will compare the results from Kraken 
 to the published data and also look at the data from a view other angles.
 
-##Write up results using markdown
-For the assignment, I would like students to complete at least 3 of the 4 sections below.  Think of the instructions in each section as guidelines for an exploratory data analysis.  Feel free to try different approaches/ parameters and explore results in more depth that you think are interesting.
+## Write up results using markdown
+For the assignment, I would like students to complete at least 3 of the 4 sections below.  Think of the instructions in each section as guidelines for an exploratory data analysis.  Feel free to try different approaches/ parameters and explore results that you think are interesting in more depth.
 
-The *most important* element of this assignment is not the results themselves but the write-up.  Integrate all the code you used to create your results with commentary that will help users understand your choices but dont put so much extra text in that it becomes a chore to read.  For each section that you complete include a succinct intro at the beginning and brief discussion of results at the end.
-
-Make a new folder in your home area on the blnx1 server and keep results files you generate. You may wish to create a simple _make_ file for the project if it helps to keep track of the commands that you have used.  
-
-I am asking you to use Markdown becasue this is a tool for creating blogs using sites such as [Github](https://github.com).  I am not asking that you maintain a git repo for your report but if you feel comfortable doing this then go right ahead.
-
-I will leave it up to you how you go about creating your report.  You probably want to create an Rmd file on the blnx1 Rstudio server to record the R commands you use.  Remember you can also have code chunks in python and unix (bash) in Rmd files. You can create a markdown (.md) file from an Rmd on the command line like this.
+The *most important* element of this assignment is not the results themselves but the write-up.  Integrate your code with commentary that will help users understand your choices but dont put so much extra text in that it becomes a chore to read.  For each section that you complete include a succinct intros at the beginning and discssion of results at the end.  You can create a markdown (.md) file from an Rmd on the command line like this.
 
     Rscript -e "library(knitr); knit('my.Rmd')"
 
-When you have finished your work on the server, I recommend moveing the .md file over to your laptop for the final editing.  Create a new folder for the writeup containing your .md file. You can use Rstudio or any text editor to edit. There are also free markdown editors for [Mac](https://macdown.uranusjr.com) and [Windows/Linux](https://remarkableapp.github.io). The easiest way to add images is to place them in your results directory and use relative paths, e.g
+Here are a couple of free markdown editors you can use as alternatives to using Rstudio, or to edit markdown files produced in Rstudio.
+
+* [Stackedit](https://stackedit.io) (Chrome browser)
+* [MacDown](https://macdown.uranusjr.com) (Mac)
+* [Remarkable](https://remarkableapp.github.io) (Windows/ Linux)
+
+The easiest way to add images is to place them in your results directory and use relative paths, e.g
 
 ![](./Dna.png)
 
-###Other resources
 
-https://help.github.com/articles/markdown-basics/ 
-
-Link to a recent [project](https://github.com/Read-Lab-Confederation/staph_metagenome_subtypes) that I wrote up in this way.
-
-##Data
-I have made sequence data available for 4 (out of the more than 1400) samples from the NYC project.  These data were originally downloaded from NCBI and we have extracted the fastq data. Choose one of the four samples to work on: 
+## Data
+I have made sequence data for 4 (out of the more than 1400) samples from the NYC project available on Dropbox.  These data were originally downloaded from NCBI and I have extracted the fastq data.  The data are in zipped folders containing forward and reverse Illumina reads.  Choose one of the four samples to work on: 
 
 * P00134
 * P00497
@@ -58,27 +52,31 @@ Each project is in a folder in the directory  /home/Shared/IBS574/TDR-metagenome
 Within each folder are two zipped fastq files - the forward and reverse reads.
 
 (A side note: the P00134 project actually had two runs, but for simplicity I am not including here the run 
-SRR1748707 which produced less data).  
+SRR1748707 that produced less data).  
 
-##Part I: Access the data and examine sequence quality
-ssh into the blnx1 server and clone the repo 
+## Part I: Access the data and examine sequence quality
+ssh into the blnx1 server and then clone the repo 
 
-     git clone "https://github.com/IBS574/metagenome_assignment"
+     git clone metagenome_practical
+     cd metagenome_practical
 
-If you need to update the repo for the assignment, cd into this folder and use,
+Make an assessment of the quality of the FASTQ data. If you are familiar with the [FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) tool, this can be used.  Another way is to use the ```SR-qualplot.R``` file in your github directory.  (Note - this may require that you install the Bioconductor *ShortRead* package. 
 
-    git pull
+	library(BiocInstaller)
+	biocLite("ShortRead")
 
-Create a new folder for the results of your analysis.
+You can run this analysis using this command:
 
-Make an assessment of the quality of the FASTQ data.  Use the scripts you created in a previous practical to create images.  Note the number and length of the reads and any other useful data you can glean.
+	Rscript SR-qualplot.R /<insert path to directory with FASTQ files>/
 
-##Part II: Kraken analysis
-Kraken is a software that classifies each read in a shotgun metagenome sample.  
+You should get an image for each FASTQ file.  
 
-Information on Kraken can be found here:
+How can you get the number and length of the reads in the FASTQ files? (*hint: think UNIX*). What other information would be useful to put in a report?
 
-https://github.com/DerrickWood/kraken
+## Part II: Kraken analysis
+[Kraken](https://paperpile.com/app/p/b130e880-bddc-0891-8bca-4e9e4c789af2) is a software that classifies each read in a shotgun metagenome sample.  
+
+More nformation on using Kraken on its [project webpage.](http://ccb.jhu.edu/software/kraken/)
 
 Run this command to understand options for running this program.  
 
@@ -86,15 +84,14 @@ Run this command to understand options for running this program.
 
 Run kraken using the minikraken database.  <FILE1> and <FILE2> are the paths to the zipped fastq files for your project
 
-     kraken --db /home/Shared/IBS574/TDR-metagenome-practical/minikraken_20141208 --fastq-input --gzip-compressed --classified-out ./krak_classified_reads --paired <FILE1>.fastq.gz <FILE2>.fastq.gz > ./kraken_out
-     kraken-report --db /home/Shared/IBS574/TDR-metagenome-practical/minikraken_20141208 ./kraken_out > kraken_report
-
-_(The first command could take more than an hour to run so you might want to run between the class sessions.)_
+     kraken --db /home/Shared/IBS574/TDR-metagenome-practical/minikraken_20141208 --fastq-input --gzip-compressed --paired <FILE1>.fastq.gz <FILE2>.fastq.gz --classified-out ./krak_classified_reads > ./kraken_out
+     kraken-report --db /home/tread/minikraken_20141208 kraken_out > kraken_report
 
 Take a look through the three output files you have created (krak\_classified\_reads, kraken.out, kraken\_report) 
 and try to understand what they are.  The projects may have hits against the biodefense pathogens *Bacillus anthracis* 
-and *Yersinia pestis*.  Write a UNIX pipeline or a short ad hoc python/R script (or combination of both) that identifies the 
-reads that map to these pathogens.  Save them in a FASTA and run a BLAST search against the NCBI database.  Do these reads have their best match against the biodefense pathogens, or could they come from close relatives?
+and *Yersinia pestis*.  Write a UNIX pipeline or a short ad hoc python script (or combination) that identifies the 
+reads that map to these pathogens.  Save them in a FASTA and run a BLAST search against the NCBI database.  Do these 
+reads have their best match against the biodefense pathogens, or could they come from close relatives?
 
 _(Hint: it will be helpful to find the NCBI Taxonomy ID associated with each species. This can be found in the 
 kraken\_report file. The fourth column is the taxonomic rank ('S' is for species) and the fiftth column is the NCBI 
@@ -106,17 +103,19 @@ You can perform a BLAST search locally against the NCBI non-redundant nucleotide
      
 Here, I have customized the output format to include the *staxids* field, which is the taxonmy ID of the subject match.  See the blastn -help option for details.  
 
-The script _knight_script2.R_ (in the repo for this assignment), written by GMB student Anna Knight, can be adapted to pull out the reads that match the pathogens. If you run this script you can BLAST the files using:
+There are several ways to tackle the problem of pulling out a specific subset of reads reads from the FASTQ file.  See the script _knight_script.R_ you can use/adapt, which written by GMB student, Anna Knight, as a solution to this problem in class. (Note: this requires installling the BioConductor Biostrings package, if not already installed).
+
+Now you can blast the files.  Here we are using a copy of the NCBI nucleotide database and the query files are the ones we just pulled out of the FASTQ files.  Here a re a set of unix commands to BLASt and parse the output.  Make sure you understand how this works and explain in your write-up.
 
      blastn -db /home/Shared/IBS574/BlastDB/nt  -query seqforpestis.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastouputoestis2
+     
      awk '{print $1,$2}' Blastouputoestis2 | sort | uniq
      
      blastn -db /home/Shared/IBS574/BlastDB/nt  -query seqforanthrax.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastoutputanthrax2
+     
      awk '{print $1,$2}' Blastoutputanthrax2 | sort | uniq
 
-Did the reads that Kraken predicted to be _Y. pestis_ or _B. anthracis_ have BLAST matches only to these species?  Were the two pathogens even the best hit for these reads?  Discuss what the results are telling you about species prediction for metagenomics data using k-mers.
-
-##Part III: Munging the data from supplemental data excel spreadsheet using R
+## Part III: Munging the data from supplemental data excel spreadsheet using R
 The word *'munge'* appears to have have come into common usage in 
 [Scotland and Northern England in the 1940s-1950s](http://english.stackexchange.com/questions/207936/what-is-the-etymology-of-munge), 
 as a verb, meaning to munch up into a masticated mess.
@@ -124,8 +123,7 @@ as a verb, meaning to munch up into a masticated mess.
 To modern data science usage, to *munge* is to find ad hoc solutions to messy formatting problems.
 
 In this case, the supplemental data for the paper contains a valuable excel spreadsheet that summarizes metadata 
-about the 1400+ samples and the results of the species assignment using the [Metaphlan tool](http://huttenhower.sph.harvard.edu/metaphlan)
-(http://www.nature.com/nmeth/journal/v9/n8/full/nmeth.2066.html).  This is an unwieldy data set to work with in 
+about the 1400+ samples and the results of the species assignment using the Metaphlan program.  This is an unwieldy data set to work with in 
 Excel. It is better and more reproducible to bring it in to R and work with it there.  Extracting useful 
 information form Excel files is a common time-consuming task in bioinformatics.  
 
@@ -133,12 +131,12 @@ In RStudio you can open the Excel file (which I have converted to .csv (comma-se
 
      temp.csv <- read.csv("/home/Shared/IBS574/TDR-metagenome-practical/DataTable5-metaphlan-metadata_v19.csv",stringsAsFactors = FALSE, header = TRUE)
      
-You will see that the spreadsheet contained, in effect, two tables.  The first 29 columns describe the metadata 
+You will see that the spreadsheet contains, in effect, two tables.  The first 29 columns describe the metadata 
 for each sample (location, GPS, temperature etc).  The rest of the columns describe the percent abundance of 
-taxonomic groups dentified by Metaphlan.  The first thought is that the abundances for each row should add up to 
+taxonomic groups identified by Metaphlan.  The first thought is that the abundances for each row should add up to 
 100% but instead they add up to about 800% (how can you show this?).  You realize that this is becasue the 
 percentage abundance for each taxonomic rank is shown separately and there are eight taxonomic ranks represented 
-(see below).  In order to compare across samples, we only want to focus on one rank.  Lets pick a genus-level 
+(see below).  To compare across samples, we only want to focus on one rank.  Let's pick a genus-level 
 classification.  A typical record looks like this:
 
 >"k__Bacteria.p__Proteobacteria.c__Gammaproteobacteria.o__Pseudomonadales.f__Pseudomonadaceae.g__Pseudomonas.s__Pseudomonas_sp_TJI_51.t__GCF_000190455"
@@ -174,18 +172,19 @@ Given the above, try and answer the following questions.
 2. What were the 20 most common bacterial genus discovered in the study (in terms of the number of samples where the genus was identified as > 0% of the microbiome)?
 3.  What was the most common genus found in Brooklyn?
 4.  Make a scatterplot of the proportion of the phyla Firmicutes and Bacteroides in each sample.
-5. (Optional).  Install the R [leaflet](https://rstudio.github.io/leaflet/) package and experiment with making interactive maps of locations of different species using the latitude and longitude coords.
 
-##Part IV BWA run against a commonly encountered bacterial genomes and perform qualitative analysis using IGV  
-From the previous analysis you will see that _Pseudomonas stutzeri_ and _Bacillus cereus_ are commonly found 
+I encourage you to think of other interesting questions in addition to, or instead of, the ones above and include them in your analysis.
+
+## Part IV: Align reads against commonly encountered bacterial genomes and qualitative analysis using IGV  
+From the previous analysis you will see that *Pseudomonas stutzeri* and *Bacillus cereus* are commonly found 
 on the NYC subway surfaces.  Here we will go back and map the metogenome data directly on to refernce genomes 
 of these species using the BWA software tool in order to understand the pattern of sequecne reads mapping against 
 the individual strains.
 
-Get the fasta files of the chromosmes directly from NCBI using _wget_.
+Get the fasta files of the chromosmes directly from NCBI using curl.
 
-     wget -O Pstutz.fasta "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=146280397&rettype=fasta&retmode=text"
-     wget -O Bceresu.fasta "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=30018278&rettype=fasta&retmode=text" 
+     curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=146280397&rettype=fasta&retmode=text" > Pstutz.fasta
+     curl "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=30018278&rettype=fasta&retmode=text" > Bcereus.fasta
      
 Choose one of these species (or both if you like).  Follow the path below to run the BWA mem alignment program, 
 changing names and paths appropriately.  You may want to move the analysis to a new separate directory.
@@ -232,13 +231,13 @@ efficency and indexed.
 The easist next step is to copy the .bam file, its index (.bai) and the Bcereus fasta file back to a folder on your 
 home computer.  Don't sync through git - the file is too large. If you are on a Mac or Linux machine, go to folder in 
 your home computer where you want to save the file and use the scp command to retrieve the file.  Below is the command 
-I used (with the path to the directories I created).  You will need your server pasword.  Substitute <PATH-TO> with the specific path on the server.  (An alternative, probably easier, is to move the files to your own computer using git push and pull commands).
+I used (with the path to the directories I created).  Windows users see [Suggested SFTP tools](http://ibs574.github.io/docs/setup/#windows-environment). You will need your server pasword.  Substitute <PATH-TO> with the specific path on the server
 
      scp myid@blnx1.emory.edu:<PATH-TO>/Bcereus_sorted.bam ./
      scp myid@blnx1.emory.edu:<PATH-TO>/Bcereus_sorted.bam.bai ./
      scp myid@blnx1.emory.edu:<PATH-TO>/Bcereus.fasta ./
      
-Next is to visualize the aligned reads using the Broad IGV.  This was partical was tested on version is 2.3.40.  The free software 
+Next is to visualize the aligned reads using the Broad IGV.  The most current version is 2.3.40.  The free software 
 can be downloaded from: 
 
 http://www.broadinstitute.org/igv/home

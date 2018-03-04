@@ -2,7 +2,7 @@ library("ShortRead")
 # the key difference is that the arg is a FOLDER not one FILE, e.g
 # Rscript SR-qualplot-HW.R /home/Shared/IBS574/MiSeq_SOP/
 arg <- commandArgs(trailingOnly=TRUE)
-#make sure that exactly arg is entered
+#make sure that exactly one arg is entered
 if (length(arg) > 1){
   stop('Stop: More than one file entered')
 }
