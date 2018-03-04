@@ -28,11 +28,7 @@ The *most important* element of this assignment is not the results themselves bu
 
     Rscript -e "library(knitr); knit('my.Rmd')"
 
-<<<<<<< HEAD
-Here are a couple of free markdown editors you can use as alternatives to using Rstudio, or to edit markdown files produced in Rstudio.
-=======
-When you have finished your work on the server, I recommend moving the .md file over to your laptop for the final editing.  Create a new folder for the writeup containing your .md file. You can use Rstudio or any text editor to edit. There are also free markdown editors for [Mac](https://macdown.uranusjr.com) and [Windows/Linux](https://remarkableapp.github.io). The easiest way to add images is to place them in your results directory and use relative paths, e.g
->>>>>>> origin/master
+There are several free markdown editors avaialble if you would like to further edit your files.
 
 * [Stackedit](https://stackedit.io) (Chrome browser)
 * [MacDown](https://macdown.uranusjr.com) (Mac)
@@ -66,12 +62,8 @@ ssh into the blnx1 server and then clone the repo
 
 Make an assessment of the quality of the FASTQ data. If you are familiar with the [FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) tool, this can be used.  Another way is to use the ```SR-qualplot.R``` file in your github directory.  (Note - this may require that you install the Bioconductor *ShortRead* package. 
 
-<<<<<<< HEAD
 	library(BiocInstaller)
 	biocLite("ShortRead")
-=======
-If you need to update the repo for the assignment, _cd_ into this folder and use,
->>>>>>> origin/master
 
 You can run this analysis using this command:
 
@@ -115,20 +107,13 @@ There are several ways to tackle the problem of pulling out a specific subset of
 
 Now you can blast the files.  Here we are using a copy of the NCBI nucleotide database and the query files are the ones we just pulled out of the FASTQ files.  Here a re a set of unix commands to BLASt and parse the output.  Make sure you understand how this works and explain in your write-up.
 
-<<<<<<< HEAD
      blastn -db /home/Shared/IBS574/BlastDB/nt  -query seqforpestis.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastouputoestis2
      
-     awk '{print $1,$2}' Blastouputoestis2 | sort | uniq
+     awk '{print $1,$2}' Blastouputoestis2 | sort -u
      
      blastn -db /home/Shared/IBS574/BlastDB/nt  -query seqforanthrax.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastoutputanthrax2
      
-=======
-     blastn -db /home/Shared/IBS574/BlastDB/nt  -query Ypestis.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastouputoestis2
-     awk '{print $1,$2}' Blastouputoestis2 | sort | uniq
-     
-     blastn -db /home/Shared/IBS574/BlastDB/nt  -query Banthracis.fasta  -outfmt "6 stitle qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore staxids" >Blastoutputanthrax2
->>>>>>> origin/master
-     awk '{print $1,$2}' Blastoutputanthrax2 | sort | uniq
+     awk '{print $1,$2}' Blastoutputanthrax2 | sort -u
 
 ## Part III: Munging the data from supplemental data excel spreadsheet using R
 The word *'munge'* appears to have have come into common usage in 
