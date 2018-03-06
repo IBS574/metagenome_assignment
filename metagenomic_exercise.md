@@ -57,8 +57,8 @@ SRR1748707 that produced less data).
 ## Part I: Access the data and examine sequence quality
 ssh into the blnx1 server and then clone the repo 
 
-     git clone metagenome_practical
-     cd metagenome_practical
+     git clone https://github.com/IBS574/metagenome_assignment.git
+     cd metagenome_assignment
 
 Make an assessment of the quality of the FASTQ data. If you are familiar with the [FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) tool, this can be used.  Another way is to use the ```SR-qualplot.R``` file in your github directory.  (Note - this may require that you install the Bioconductor *ShortRead* package. 
 
