@@ -60,11 +60,15 @@ ssh into the blnx1 server and then clone the repo
      git clone https://github.com/IBS574/metagenome_assignment.git
      cd metagenome_assignment
 
+You should copy the zipped fastq files you are working on to your local directory.
+
 Make an assessment of the quality of the FASTQ data. If you are familiar with the [FASTQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) tool, this can be used.  To find out about how to run this program, use:
 
 	fastqc -h
 
 You will have to create a directory in your analysis folder for each file and then specify this directory using the ```-o``` option in ```fastqc```
+
+You will need to ```unzip``` your fastqc analysis results to get at the folder with images and stats etc.
 
 Another way is to use the ```SR-qualplot.R``` file in your github directory.  (Note - this may require that you install the Bioconductor *ShortRead* package. 
 
