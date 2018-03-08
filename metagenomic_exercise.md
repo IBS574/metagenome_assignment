@@ -95,7 +95,7 @@ Run this command to understand options for running this program.
 Run kraken using the minikraken database.  <FILE1> and <FILE2> are the paths to the zipped fastq files for your project
 
      kraken --db /home/Shared/IBS574/TDR-metagenome-practical/minikraken_20141208 --fastq-input --gzip-compressed --paired <FILE1>.fastq.gz <FILE2>.fastq.gz --classified-out ./krak_classified_reads > ./kraken_out
-     kraken-report --db /home/tread/minikraken_20141208 kraken_out > kraken_report
+     kraken-report --db /home/Shared/IBS574/TDR-metagenome-practical/minikraken_20141208 kraken_out > kraken_report
 
 Take a look through the three output files you have created (krak\_classified\_reads, kraken.out, kraken\_report) 
 and try to understand what they are.  The projects may have hits against the biodefense pathogens *Bacillus anthracis* 
