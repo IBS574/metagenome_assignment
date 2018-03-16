@@ -241,7 +241,7 @@ efficency and indexed.
 The easist next step is to copy the .bam file, its index (.bai) and the Bcereus fasta file back to a folder on your 
 home computer.  Don't sync through git - the file is too large. If you are on a Mac or Linux machine, go to folder in 
 your home computer where you want to save the file and use the scp command to retrieve the file.  Below is the command 
-I used (with the path to the directories I created).  Windows users see [Suggested SFTP tools](http://ibs574.github.io/docs/setup/#windows-environment). You will need your server pasword.  Substitute <PATH-TO> with the specific path on the server
+I used (with the path to the directories I created).  Windows users see [Suggested SFTP tools](https://www.thegeekstuff.com/2011/06/windows-sftp-scp-clients/). You will need your server pasword.  Substitute <PATH-TO> with the specific path on the server
 
      scp myid@blnx1.emory.edu:<PATH-TO>/Bcereus_sorted.bam ./
      scp myid@blnx1.emory.edu:<PATH-TO>/Bcereus_sorted.bam.bai ./
